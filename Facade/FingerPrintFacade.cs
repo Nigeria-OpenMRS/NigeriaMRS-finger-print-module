@@ -153,9 +153,7 @@ namespace FingerPrintModule.Facade
                 }
             }
         }
-
         
-
 
         public string ToBase64String(Byte[] imgData, ImageFormat imageFormat)
         {
