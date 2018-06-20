@@ -35,6 +35,24 @@ namespace FingerPrintModule.DAO
         public string ErrorMessage { get; set; }
     }
 
+
+    public class ConnectionString
+    { 
+        public string Server { get; set; }
+        public string DatabaseName { get; set; }
+        public string Username { get; set; }
+        public string Password { get; set; }
+        public string FullConnectionString
+        {
+            get
+            {
+                return string.Format("Server={0};Database={1};Uid={2};Pwd={3};"
+                    , Server, DatabaseName, Username, Password);
+            }
+        }
+    }
+
+
     public enum FingerPositions
     {
         RightThumb = 1,

@@ -75,5 +75,44 @@ namespace FingerPrintModule.Controllers
         }
 
 
+        [HttpPost]
+        public ConnectionString SaveConnectionString(ConnectionString connectionString)
+        {
+            var db = new DataAccess(connectionString.FullConnectionString);
+            //check if connection is valid
+            //if connection string is wrong an error would occur here and will return error
+            db.ExecuteScalar(string.Format("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '{0}';",connectionString.DatabaseName));
+
+            db.ExecuteQuery(
+               @"CREATE TABLE IF NOT EXISTS `biometricInfo` (
+                        `biometricInfo_Id` INT(11) NOT NULL AUTO_INCREMENT,
+                          `patient_Id` INT(11) NOT NULL,
+                          `template` TEXT NOT NULL,
+                          `imageWidth` INT(11) DEFAULT NULL,
+                          `imageHeight` INT(11) DEFAULT NULL,
+                          `imageDPI` INT(11) DEFAULT NULL,
+                          `imageQuality` INT(11) DEFAULT NULL,
+                          `fingerPosition` VARCHAR(50) DEFAULT NULL,
+                          `serialNumber` VARCHAR(255) DEFAULT NULL,
+                          `model` VARCHAR(255) DEFAULT NULL,
+                          `manufacturer` VARCHAR(255) DEFAULT NULL,
+                          `creator` INT(11) DEFAULT NULL,
+                          `date_created` DATETIME DEFAULT NULL,
+                          PRIMARY KEY(`biometricInfo_Id`),
+                          FOREIGN KEY(patient_Id) REFERENCES patient(patient_Id),
+                          FOREIGN KEY(creator) REFERENCES patient(creator)
+                        ) ENGINE = MYISAM AUTO_INCREMENT = 2 DEFAULT CHARSET = utf8; "
+                );
+            
+            db.WriteConnectionToFile(connectionString);            
+            return connectionString;
+        }
+
+        [HttpPost]
+        public ConnectionString GetConnectionString()
+        {
+            var db = new DataAccess();             
+            return db.GetConnectionStringFromFile();
+        }
     }
 }

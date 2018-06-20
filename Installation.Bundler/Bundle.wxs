@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"  xmlns:bal="http://schemas.microsoft.com/wix/BalExtension">
+	<Bundle Name="Biometric installation bundler" Version="1.0.0.0" Manufacturer="UMB Nigeria" UpgradeCode="be936369-aab1-46ed-89e9-e65a01eba6ec">
+ 
+    <BootstrapperApplicationRef Id="WixStandardBootstrapperApplication.RtfLicense" >
+      <bal:WixStandardBootstrapperApplication
+             LicenseFile="Resources\Licence.rtf"  />
+    </BootstrapperApplicationRef>
+   
+    
+		<Chain>
+			 <MsiPackage SourceFile="C:\MGIC\Project\FingerPrintModule\Biometric.Installer\bin\Debug\Biometric.Installer.msi" />       
+		</Chain>
+    
+    <Variable Name="LaunchTarget"  Hidden="yes" Persisted="yes" bal:Overridable="no"
+              Value="C:\Program Files (x86)\Biometric Installer\database_connection.html"/>
+
+	</Bundle>
+</Wix>

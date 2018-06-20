@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.OleDb;
+using System.IO;
+using System.Linq;
 using MySql.Data;
 using MySql.Data.MySqlClient;
 
@@ -12,11 +14,19 @@ namespace FingerPrintModule.DAO
         private IDbConnection sql_con;
         //private IDbCommand sql_cmd;
         private IDbDataAdapter dbDataAdapter;
+        readonly string path = String.Format(@"{0}\connection_string.txt",
+                Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase).Replace("file:\\", ""));
+
         public DataAccess()
         {
-            string connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["NigeriaMRS"].ConnectionString;
+            var connectionInfo = GetConnectionStringFromFile();
+            string connectionString = connectionInfo != null ? connectionInfo.FullConnectionString : System.Configuration.ConfigurationManager.ConnectionStrings["NigeriaMRS"].ConnectionString;
             sql_con = new MySqlConnection(connectionString);
-            //sql_cmd = new OleDbCommand();
+        }
+
+        public DataAccess(string connectionString)
+        {
+            sql_con = new MySqlConnection(connectionString);
         }
 
         private DataSet DS = new DataSet();
@@ -35,7 +45,7 @@ namespace FingerPrintModule.DAO
 
 
         //<add name = "NigeriaMRS" connectionString="Server=127.0.0.1;Port=3306;Data Source=server;User Id=root;Password=root;Provider=ADsDSOObject;"/>
-        private void ExecuteQuery(string txtQuery)
+        public void ExecuteQuery(string txtQuery)
         {
             sql_con.Open();
             IDbCommand sql_cmd = new MySqlCommand(txtQuery, (MySqlConnection)sql_con);
@@ -44,7 +54,7 @@ namespace FingerPrintModule.DAO
             sql_con.Close();
         }
 
-        private int ExecuteScalar(string txtQuery)
+        public int ExecuteScalar(string txtQuery)
         {
             sql_con.Open();
             IDbCommand sql_cmd = new MySqlCommand(txtQuery, (MySqlConnection)sql_con);
@@ -96,11 +106,28 @@ namespace FingerPrintModule.DAO
                 }
             }
 
-
             return _list;
         }
 
+        internal void WriteConnectionToFile(ConnectionString connectionString)
+        { 
+            using (StreamWriter sw = (File.Exists(path)) ? new StreamWriter(path, false) : File.CreateText(path))
+            {
+                sw.WriteLine(connectionString.FullConnectionString);
+                sw.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(connectionString));
+            }
+        }
 
+        internal ConnectionString GetConnectionStringFromFile()
+        {
+            ConnectionString connectionString = null;
+            if (File.Exists(path))
+            {
+               var lines =  File.ReadLines(path).ToArray();
+                connectionString = Newtonsoft.Json.JsonConvert.DeserializeObject<ConnectionString>(lines[1]);               
+            }
+            return connectionString;
+        }
 
         public void Save(FingerPrintInfo fingerPrint)
         {

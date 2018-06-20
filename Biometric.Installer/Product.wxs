@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" 
+     xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+  <?define FingerPrintModule_TargetDir=$(var.FingerPrintModule.TargetDir)?>
+  <?define Version="1.1.3"?>
+
+
+  <Product Id="*" Name="Biometric Installer" Language="1033" Version="$(var.Version)" Manufacturer="UMB Nigeria" UpgradeCode="13ee3dc8-0a40-4216-b219-5a9b192c7138">
+    <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+
+    <MajorUpgrade  Schedule="afterInstallInitialize" DowngradeErrorMessage="A newer version of Biometric Installer is already installed." />
+    <MediaTemplate />
+
+    <WixVariable Id="WixUILicenseRtf" Value="Resources\Licence.rtf" />
+    
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFilesFolder">
+        <Directory Id="INSTALLFOLDER" Name="Biometric Installer"/>
+      </Directory>
+    </Directory>
+
+    <DirectoryRef Id="INSTALLFOLDER">
+      <Component Id="database_connection.html" Guid="E5D2D2FC-F7E9-49CC-9E77-BD123CA2141D">
+        <File Id="database_connection.html" Source="$(var.FingerPrintModule_TargetDir)database_connection.html" KeyPath="yes" Checksum="yes"/>
+      </Component> 
+    </DirectoryRef>
+    
+    <Feature Id="ProductFeature" Title="Biometric Installer" Level="1">
+      <ComponentRef Id="database_connection.html" />
+      <ComponentGroupRef Id="ProductComponents" />      
+    </Feature>
+    
+    <!-- Trigger the custom action -->
+    <UI>
+      <UIRef Id="WixUI_Minimal" />
+      <Publish Dialog="ExitDialog"
+          Control="Finish"
+          Event="DoAction"
+          Value="LaunchApplication">NOT Installed</Publish>
+    </UI>
+    <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="database_connection.html" />
+    <Property Id="WixShellExecTarget" Value="[#database_connection.html]" />
+    <CustomAction Id="LaunchApplication"
+        BinaryKey="WixCA" 
+        DllEntry="WixShellExec"
+        Impersonate="yes" />
+    
+    
+    <Upgrade Id="47C6DB51-D53B-4DC0-94CC-A06A073EA9AC">
+      <UpgradeVersion Minimum="1.0.0" IncludeMinimum="yes" OnlyDetect="no" Maximum="$(var.Version)" IncludeMaximum="no" Property="PREVIOUSFOUND" />
+    </Upgrade>
+
+    <Property Id="MSIRESTARTMANAGERCONTROL" Value="Disable" />
+ 
+  </Product>
+
+  <!--<Fragment>
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFilesFolder">
+        <Directory Id="INSTALLFOLDER" Name="Biometric Installer" />
+      </Directory>
+    </Directory>
+  </Fragment>-->
+
+
+  <Fragment>
+    <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+
+      <Component Id="ProductComponent">
+        <File Id="FingerPrintModule.exe" Name="FingerPrintModule.exe" DiskId="1" KeyPath="yes" Source="C:\MGIC\Project\FingerPrintModule\bin\Debug\FingerPrintModule.exe">
+        </File>
+
+        <ServiceInstall Id="serviceInstaller" Type="ownProcess" Name="FingerPrintModule" DisplayName="Finger print middleware"
+                        Description="Finger print middleware for NigeriaMRS"
+                        Start="auto" Account="LocalSystem" ErrorControl="ignore" Vital="yes" Interactive="no"
+                        Arguments=" /start JobService">
+
+          <ServiceConfig DelayedAutoStart="yes" OnInstall="yes" OnReinstall="yes" />
+        </ServiceInstall>
+        <ServiceControl Id="ServiceControl_Start"
+                        Name="FingerPrintModule"
+                        Start="install"
+                        Wait="no" />
+        <ServiceControl Id="ServiceControl_Stop"
+                        Name="FingerPrintModule"
+                        Stop="both"
+                        Remove="uninstall"
+                        Wait="yes" />
+      </Component>
+
+      <Component Id="MySql.Data.dll" Guid="DC3511CC-E726-4B87-B390-923D11E2E011">
+        <File Id="MySql.Data.dll" Name="MySql.Data.dll" Source="$(var.FingerPrintModule_TargetDir)MySql.Data.dll" KeyPath="no" Vital="yes" DiskId="1" />
+      </Component>
+
+      <Component Id="Newtonsoft.Json.dll" Guid="FC3AF346-0454-4062-994A-FD657373CB1D">
+        <File Id="Newtonsoft.Json.dll" Name="Newtonsoft.Json.dll" Source="$(var.FingerPrintModule_TargetDir)Newtonsoft.Json.dll" KeyPath="no" Vital="yes" DiskId="1" />
+      </Component>
+
+      <Component Id="SecuGen.FDxSDKPro.Windows.dll" Guid="BC275C88-9A75-4BB6-B129-36C7D27E72A4">
+        <File Id="SecuGen.FDxSDKPro.Windows.dll" Name="SecuGen.FDxSDKPro.Windows.dll" Source="$(var.FingerPrintModule_TargetDir)SecuGen.FDxSDKPro.Windows.dll" KeyPath="no" Vital="yes" DiskId="1" />
+      </Component>
+
+      <Component Id="sgfpamx.dll" Guid="BEE85B14-BD78-4988-AB88-A1EEDBB98CB4">
+        <File Id="sgfpamx.dll" Name="sgfpamx.dll" Source="$(var.FingerPrintModule_TargetDir)sgfpamx.dll" KeyPath="no" Vital="yes" DiskId="1" />
+      </Component>
+
+      <Component Id="sgfplib.dll" Guid="0D65A253-D506-46EF-BF4E-9A2F4066D823">
+        <File Id="sgfplib.dll" Name="sgfplib.dll" Source="$(var.FingerPrintModule_TargetDir)sgfplib.dll" KeyPath="no" Vital="yes" DiskId="1" />
+      </Component>
+
+      <Component Id="sgfplibx.ocx" Guid="4A254BCC-D5D1-49E9-8898-E1224CDEAD03">
+        <File Id="sgfplibx.ocx" Name="sgfplibx.dll" Source="$(var.FingerPrintModule_TargetDir)sgfplibx.ocx" KeyPath="no" Vital="yes" DiskId="1" />
+      </Component>
+      <Component Id="System.Net.Http.dll" Guid="1616B88F-61C5-44EF-B484-08D525ECD214">
+        <File Id="System.Net.Http.dll" Name="System.Net.Http.dll" Source="$(var.FingerPrintModule_TargetDir)System.Net.Http.dll" KeyPath="no" Vital="yes" DiskId="1" />
+      </Component>
+      <Component Id="System.Net.Http.Formatting.dll" Guid="CCC50DCB-FFA4-4934-AA71-2E6BDC9B69DE">
+        <File Id="System.Net.Http.Formatting.dll" Name="System.Net.Http.Formatting.dll" Source="$(var.FingerPrintModule_TargetDir)System.Net.Http.Formatting.dll" KeyPath="no" Vital="yes" DiskId="1" />
+      </Component>
+      <Component Id="System.Net.Http.WebRequest.dll" Guid="378CD03B-1131-48B0-834A-1782863D9973">
+        <File Id="System.Net.Http.WebRequest.dll" Name="System.Net.Http.WebRequest.dll" Source="$(var.FingerPrintModule_TargetDir)System.Net.Http.WebRequest.dll" KeyPath="no" Vital="yes" DiskId="1" />
+      </Component>
+      <Component Id="System.Web.Http.dll" Guid="111CFC13-DABE-465B-A20E-988340B1198B">
+        <File Id="System.Web.Http.dll" Name="System.Web.Http.dll" Source="$(var.FingerPrintModule_TargetDir)System.Web.Http.dll" KeyPath="no" Vital="yes" DiskId="1" />
+      </Component>
+
+      <Component Id="System.Web.Http.SelfHost.dll" Guid="D2200D63-F367-4370-A000-9A033C697E6E">
+        <File Id="System.Web.Http.SelfHost.dll" Name="System.Web.Http.SelfHost.dll" Source="$(var.FingerPrintModule_TargetDir)System.Web.Http.SelfHost.dll" KeyPath="no" Vital="yes" DiskId="1" />
+      </Component>
+
+      <Component Id="FingerPrintModule.exe.config" Guid="D866B05C-22F7-4A8D-8D72-A385B87CEC8F">
+        <File Id="FingerPrintModule.exe.config" Name="FingerPrintModule.exe.config" Source="$(var.FingerPrintModule_TargetDir)FingerPrintModule.exe.config" KeyPath="no" Vital="yes" DiskId="1" />
+      </Component>
+
+      <Component Id="jquery.js" Guid="6A4BB6DD-1DA0-4D1B-86EA-BB66DAD7F5B3">
+        <File Id="jquery.js" Name="jquery.js" Source="$(var.FingerPrintModule_TargetDir)jquery.js" KeyPath="no" Vital="yes" DiskId="1" />
+      </Component>
+
+      <Component Id="bg.jpg" Guid="350B20DF-7CDB-4D4C-B8A3-2384D474B5E2">
+        <File Id="bg.jpg" Name="bg.jpg" Source="$(var.FingerPrintModule_TargetDir)bg.jpg" KeyPath="no" Vital="yes" DiskId="1" />
+      </Component>
+
+      <Component Id="style.css" Guid="EA18EA37-6611-4719-9AD1-101A31889E5F">
+        <File Id="style.css" Name="style.css" Source="$(var.FingerPrintModule_TargetDir)style.css" KeyPath="no" Vital="yes" DiskId="1" />
+      </Component>
+ 
+      <!--<Component Id="database_connection.html" Guid="DAB11CCF-A007-4E1F-83A8-C8EA52B4D7B5">
+        <File Id="database_connection.html" Name="database_connection.html" Source="$(var.FingerPrintModule_TargetDir)database_connection.html" KeyPath="no" Vital="yes" DiskId="1" />
+      </Component>-->
+      
+    </ComponentGroup>
+  </Fragment>
+</Wix>

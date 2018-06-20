@@ -1,0 +1,54 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<title>Database set up</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link href="style.css" rel="stylesheet" type="text/css" media="all">
+    
+</head>
+<body>
+    <script src="jquery.js"></script>
+
+    <div class="main main-agileits">
+        <h1>Set database connection</h1>
+        <div class="main-agilerow">
+            <div class="contact-wthree">
+                <form action="http://localhost:2018/api/FingerPrint/SaveConnectionString" method="post">
+                    <h3>Connection string :</h3>
+                    <div class="form-w3step1">
+                        <input name="Server" placeholder="Server or IP address" required="" type="text">
+                        <input name="DatabaseName" placeholder="Database Name" required="" type="text">
+                        <input name="Username" placeholder="User name" required="" type="text">
+                        <input name="Password" placeholder="Password" required="" type="text">
+                    </div>
+                    <input value="Save" type="submit">
+                </form>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        var uri = "http://localhost:2018/api/FingerPrint/GetConnectionString";
+
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function () {
+            if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                fpobject = JSON.parse(xmlhttp.responseText);
+                document.getElementsByName('Server')[0].value = fpobject.Server;
+                document.getElementsByName('DatabaseName')[0].value = fpobject.DatabaseName;
+                document.getElementsByName('Username')[0].value = fpobject.Username;
+                document.getElementsByName('Password')[0].value = fpobject.Password;
+            }
+            else if (xmlhttp.status == 404) {
+                alert(xmlhttp.status)
+            }
+        }
+        xmlhttp.open("POST", uri, true);
+        xmlhttp.send();
+
+        xmlhttp.onerror = function () {
+            alert(xmlhttp.statusText);
+        }
+    </script>
+</body>
+</html>

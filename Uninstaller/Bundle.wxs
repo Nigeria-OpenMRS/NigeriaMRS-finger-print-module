@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:bal="http://schemas.microsoft.com/wix/BalExtension">
+	<Bundle Name="Uninstaller" Version="1.0.0.0" Manufacturer="UMB" UpgradeCode="f24cd1d7-beab-4fb7-8766-3f01892d2350">
+ 
+    <BootstrapperApplicationRef Id="WixStandardBootstrapperApplication.RtfLicense" >     
+      <bal:WixStandardBootstrapperApplication
+             LicenseFile="Resources\Licence.rtf"  />
+    </BootstrapperApplicationRef>
+
+		<Chain>
+      <ExePackage SourceFile="C:\MGIC\Project\FingerPrintModule\Uninstall\bin\Debug\Uninstall.exe" />
+      <ExePackage SourceFile="C:\MGIC\Project\FingerPrintModule\Installation.Bundler\bin\Debug\Installation.Bundler.exe" />
+		</Chain>
+	</Bundle>
+</Wix>
