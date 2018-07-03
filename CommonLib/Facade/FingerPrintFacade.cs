@@ -1,14 +1,11 @@
-﻿using FingerPrintModule.DAO;
+﻿using CommonLib.DAO;
 using SecuGen.FDxSDKPro.Windows;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
-using System.Text;
 
-namespace FingerPrintModule.Facade
+namespace CommonLib.Facade
 {
     public class FingerPrintFacade
     {
@@ -24,9 +21,10 @@ namespace FingerPrintModule.Facade
 
 
 
-        public FingerPrintInfo Capture(int fingerPosition)
+        public FingerPrintInfo Capture(int fingerPosition, out string err, bool populateImagebytes = false)
         {
             InitializeDevice();
+            err = "";
 
             Byte[] fp_image = new Byte[m_ImageWidth * m_ImageHeight];
             Byte[] m_fingerprinttemplate = new Byte[max_template_size];
@@ -65,12 +63,15 @@ namespace FingerPrintModule.Facade
                         ImageDPI = m_Dpi,
                         ImageQuality = img_qlty,
                         Image = ToBase64String(fp_image, ImageFormat.Bmp),
+                        ImageByte = populateImagebytes ? fp_image : null,
                         Template = Convert.ToBase64String(m_fingerprinttemplate),
                         FingerPositions = (FingerPositions)fingerPosition
                     };
                 }
             }
-            throw new ApplicationException("Error : " + ((SGFPMError)error).ToString());
+            err = "Error : " + ((SGFPMError)error).ToString();
+            return null;
+           // throw new ApplicationException("Error : " + ((SGFPMError)error).ToString());
         }
 
         public int Verify(FingerPrintMatchInputModel input)
@@ -116,11 +117,11 @@ namespace FingerPrintModule.Facade
 
 
             error = m_FPM.Init(device_name);
-            if(error != (Int32)SGFPMError.ERROR_NONE)
+            if (error != (Int32)SGFPMError.ERROR_NONE)
             {
                 error = m_FPM.InitEx(m_ImageWidth, m_ImageHeight, m_Dpi);
             }
-            
+
             if (error == (Int32)SGFPMError.ERROR_NONE)
             {
                 m_FPM.CloseDevice();
@@ -153,7 +154,7 @@ namespace FingerPrintModule.Facade
                 }
             }
         }
-        
+
 
         public string ToBase64String(Byte[] imgData, ImageFormat imageFormat)
         {
@@ -186,12 +187,12 @@ namespace FingerPrintModule.Facade
         }
 
         public byte[] Base64StringByteArray(string base64String)
-        { 
+        {
             byte[] byteBuffer = Convert.FromBase64String(base64String);
             return byteBuffer;
-            
+
         }
 
-         
+
     }
 }

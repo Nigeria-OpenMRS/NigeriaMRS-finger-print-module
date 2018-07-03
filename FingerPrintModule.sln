@@ -13,6 +13,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uninstall", "Uninstall\Unin
 EndProject
 Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "Uninstaller", "Uninstaller\Uninstaller.wixproj", "{F24CD1D7-BEAB-4FB7-8766-3F01892D2350}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonLib", "CommonLib\CommonLib.csproj", "{362DAEDF-101E-4319-9F2D-DEF3E5ADCC46}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FingerPrintDesktop", "FingerPrintDesktop\FingerPrintDesktop.csproj", "{0A3A4AFD-13AB-47FD-AE45-0CB99820DCFB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -71,6 +75,30 @@ Global
 		{F24CD1D7-BEAB-4FB7-8766-3F01892D2350}.Release|x64.ActiveCfg = Release|x86
 		{F24CD1D7-BEAB-4FB7-8766-3F01892D2350}.Release|x86.ActiveCfg = Release|x86
 		{F24CD1D7-BEAB-4FB7-8766-3F01892D2350}.Release|x86.Build.0 = Release|x86
+		{362DAEDF-101E-4319-9F2D-DEF3E5ADCC46}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{362DAEDF-101E-4319-9F2D-DEF3E5ADCC46}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{362DAEDF-101E-4319-9F2D-DEF3E5ADCC46}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{362DAEDF-101E-4319-9F2D-DEF3E5ADCC46}.Debug|x64.Build.0 = Debug|Any CPU
+		{362DAEDF-101E-4319-9F2D-DEF3E5ADCC46}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{362DAEDF-101E-4319-9F2D-DEF3E5ADCC46}.Debug|x86.Build.0 = Debug|Any CPU
+		{362DAEDF-101E-4319-9F2D-DEF3E5ADCC46}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{362DAEDF-101E-4319-9F2D-DEF3E5ADCC46}.Release|Any CPU.Build.0 = Release|Any CPU
+		{362DAEDF-101E-4319-9F2D-DEF3E5ADCC46}.Release|x64.ActiveCfg = Release|Any CPU
+		{362DAEDF-101E-4319-9F2D-DEF3E5ADCC46}.Release|x64.Build.0 = Release|Any CPU
+		{362DAEDF-101E-4319-9F2D-DEF3E5ADCC46}.Release|x86.ActiveCfg = Release|Any CPU
+		{362DAEDF-101E-4319-9F2D-DEF3E5ADCC46}.Release|x86.Build.0 = Release|Any CPU
+		{0A3A4AFD-13AB-47FD-AE45-0CB99820DCFB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0A3A4AFD-13AB-47FD-AE45-0CB99820DCFB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0A3A4AFD-13AB-47FD-AE45-0CB99820DCFB}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{0A3A4AFD-13AB-47FD-AE45-0CB99820DCFB}.Debug|x64.Build.0 = Debug|Any CPU
+		{0A3A4AFD-13AB-47FD-AE45-0CB99820DCFB}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{0A3A4AFD-13AB-47FD-AE45-0CB99820DCFB}.Debug|x86.Build.0 = Debug|Any CPU
+		{0A3A4AFD-13AB-47FD-AE45-0CB99820DCFB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0A3A4AFD-13AB-47FD-AE45-0CB99820DCFB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0A3A4AFD-13AB-47FD-AE45-0CB99820DCFB}.Release|x64.ActiveCfg = Release|Any CPU
+		{0A3A4AFD-13AB-47FD-AE45-0CB99820DCFB}.Release|x64.Build.0 = Release|Any CPU
+		{0A3A4AFD-13AB-47FD-AE45-0CB99820DCFB}.Release|x86.ActiveCfg = Release|Any CPU
+		{0A3A4AFD-13AB-47FD-AE45-0CB99820DCFB}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

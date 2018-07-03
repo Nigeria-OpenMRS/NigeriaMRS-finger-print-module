@@ -1,5 +1,5 @@
-﻿using FingerPrintModule.DAO;
-using FingerPrintModule.Facade;
+﻿using CommonLib.DAO;
+using CommonLib.Facade;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -8,34 +8,64 @@ using System.Web.Http;
 namespace FingerPrintModule.Controllers
 {
     public class FingerPrintController : ApiController
-    {     
+    {
 
         [HttpGet]
         public FingerPrintInfo CapturePrint(int fingerPosition)
         {
             FingerPrintFacade fingerPrintFacade = new FingerPrintFacade();
-            var data = fingerPrintFacade.Capture(fingerPosition);
+            var data = fingerPrintFacade.Capture(fingerPosition, out string err, false);
 
-            var db = new DataAccess();
-            var previously = db.GetPatientBiometricinfo();
-            
-            var matchedPatientId = fingerPrintFacade.Verify(new FingerPrintMatchInputModel
+            if (string.IsNullOrEmpty(err))
             {
-                FingerPrintTemplate = data.Template,
-                FingerPrintTemplateListToMatch = new List<FingerPrintInfo>(previously)
+                var db = new DataAccess();
+                var previously = db.GetPatientBiometricinfo();
 
-            });
-            if(matchedPatientId != 0)
-            {
-                data.ErrorMessage = "Previous record found for this finger print";
+                var matchedPatientId = fingerPrintFacade.Verify(new FingerPrintMatchInputModel
+                {
+                    FingerPrintTemplate = data.Template,
+                    FingerPrintTemplateListToMatch = new List<FingerPrintInfo>(previously)
+
+                });
+                if (matchedPatientId != 0)
+                {
+                    string info = db.RetrievePatientNameByPatientId(matchedPatientId);
+                    string name = info.Split('|')[0];
+                    string UniqueId = info.Split('|')[1];
+                    data.ErrorMessage = string.Format("Finger print record already exist for this patient {0} Name : {1} {2} Patient Identifier : {3}",
+                        Environment.NewLine, name, Environment.NewLine, UniqueId);
+                }
             }
-            return data; 
+            else
+            {
+                data = new FingerPrintInfo();
+                data.ErrorMessage = err;
+            }
+            return data;
         }
+
+        [HttpGet]
+        public List<FingerPrintInfo> CheckForPreviousCapture(string PatientUUID)
+        {
+            var db = new DataAccess();
+            var patientInfo = db.RetrievePatientIdByUUID(PatientUUID);
+
+            if (patientInfo != null && Int32.TryParse(patientInfo.Split('|')[1], out int pid))
+            {
+                var previously = db.GetPatientBiometricinfo(pid);
+                return previously;
+            }
+            else
+            {
+                return null;
+            }            
+        }
+
 
         [HttpPost]
         public string MatchFingerPrint(FingerPrintMatchInputModel input)
         {
-            
+
             FingerPrintFacade fingerPrintFacade = new FingerPrintFacade();
             var matchedPatientId = fingerPrintFacade.Verify(input);
 
@@ -49,29 +79,25 @@ namespace FingerPrintModule.Controllers
 
 
         [HttpPost]
-        public ResponseModel SaveToDatabase(List<FingerPrintInfo> fingerPrintList)
+        public ResponseModel SaveToDatabase(SaveModel model)
         {
-            try
+            var db = new DataAccess();
+            string patientUUID = model.PatientUUID;
+            var patientInfo = db.RetrievePatientIdByUUID(patientUUID);
+
+            if (patientInfo != null && Int32.TryParse(patientInfo.Split('|')[1], out int pid))
             {
-                var db = new DataAccess();
-                foreach (var f in fingerPrintList)
-                {
-                    db.Save(f);
-                }                
-                return new ResponseModel
-                {
-                    ErrorMessage = "Saved successfully",
-                    IsSuccessful = true
-                };
+                model.FingerPrintList.ForEach(x => x.PatienId = pid);
+                return db.SaveToDatabase(model.FingerPrintList);
             }
-            catch(Exception ex)
+            else
             {
                 return new ResponseModel
                 {
-                    ErrorMessage = ex.Message,
+                    ErrorMessage = "Invalid patientId supplied",
                     IsSuccessful = false
                 };
-            }
+            }            
         }
 
 
@@ -81,7 +107,7 @@ namespace FingerPrintModule.Controllers
             var db = new DataAccess(connectionString.FullConnectionString);
             //check if connection is valid
             //if connection string is wrong an error would occur here and will return error
-            db.ExecuteScalar(string.Format("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '{0}';",connectionString.DatabaseName));
+            db.ExecuteScalar(string.Format("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '{0}';", connectionString.DatabaseName));
 
             db.ExecuteQuery(
                @"CREATE TABLE IF NOT EXISTS `biometricInfo` (
@@ -103,15 +129,15 @@ namespace FingerPrintModule.Controllers
                           FOREIGN KEY(creator) REFERENCES patient(creator)
                         ) ENGINE = MYISAM AUTO_INCREMENT = 2 DEFAULT CHARSET = utf8; "
                 );
-            
-            db.WriteConnectionToFile(connectionString);            
+
+            db.WriteConnectionToFile(connectionString);
             return connectionString;
         }
 
         [HttpPost]
         public ConnectionString GetConnectionString()
         {
-            var db = new DataAccess();             
+            var db = new DataAccess();
             return db.GetConnectionStringFromFile();
         }
     }

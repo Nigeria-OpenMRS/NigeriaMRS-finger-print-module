@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace FingerPrintModule.DAO
+namespace CommonLib.DAO
 {
     public class FingerPrintInfo
     {
@@ -13,6 +13,7 @@ namespace FingerPrintModule.DAO
         public int ImageDPI { get; set; }
         public int ImageQuality { get; set; }
         public string Image { get; set; }
+        public byte[] ImageByte { get; set; }
         public string Template { get; set; }
         public FingerPositions FingerPositions { get; set; }
         public int PatienId { get; set; }
@@ -20,6 +21,12 @@ namespace FingerPrintModule.DAO
         public int Creator { get; set; }
 
         public string ErrorMessage { get; set; }
+    }
+
+    public class SaveModel
+    {
+       public List<FingerPrintInfo> FingerPrintList { get; set; }
+        public string PatientUUID { get; set; }
     }
 
     public class FingerPrintMatchInputModel
@@ -50,6 +57,7 @@ namespace FingerPrintModule.DAO
                     , Server, DatabaseName, Username, Password);
             }
         }
+        public bool IsOpenMRSDB { get; set; }
     }
 
 

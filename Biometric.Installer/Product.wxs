@@ -2,6 +2,8 @@
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" 
      xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
   <?define FingerPrintModule_TargetDir=$(var.FingerPrintModule.TargetDir)?>
+   <?define CommonLib_TargetDir=$(var.CommonLib.TargetDir)?>
+  <?define FingerPrintDesktop_TargetDir=$(var.FingerPrintDesktop.TargetDir)?>
   <?define Version="1.1.3"?>
 
 
@@ -53,15 +55,6 @@
     <Property Id="MSIRESTARTMANAGERCONTROL" Value="Disable" />
  
   </Product>
-
-  <!--<Fragment>
-    <Directory Id="TARGETDIR" Name="SourceDir">
-      <Directory Id="ProgramFilesFolder">
-        <Directory Id="INSTALLFOLDER" Name="Biometric Installer" />
-      </Directory>
-    </Directory>
-  </Fragment>-->
-
 
   <Fragment>
     <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
@@ -132,6 +125,18 @@
         <File Id="FingerPrintModule.exe.config" Name="FingerPrintModule.exe.config" Source="$(var.FingerPrintModule_TargetDir)FingerPrintModule.exe.config" KeyPath="no" Vital="yes" DiskId="1" />
       </Component>
 
+      <Component Id="CommonLib.dll" Guid="C63F4A8A-DA8F-401E-92E2-856BFA17DBBE">
+        <File Id="CommonLib.dll" Name="CommonLib.dll" Source="$(var.CommonLib_TargetDir)CommonLib.dll" KeyPath="no" Vital="yes" DiskId="1" />
+      </Component>
+
+      <Component Id="FingerPrintDesktop.exe" Guid="6F1EC2E0-7E4F-4554-A0C7-945BA81D1C96">
+        <File Id="FingerPrintDesktop.exe" Name="FingerPrintDesktop.exe" Source="$(var.FingerPrintDesktop_TargetDir)FingerPrintDesktop.exe" KeyPath="no" Vital="yes" DiskId="1" />
+      </Component>
+
+      <Component Id="FingerPrintDesktop.exe.config" Guid="F8E0E868-85CA-412C-B6E9-F18D384158D8">
+        <File Id="FingerPrintDesktop.exe.config" Name="FingerPrintDesktop.exe.config" Source="$(var.FingerPrintDesktop_TargetDir)FingerPrintDesktop.exe.config" KeyPath="no" Vital="yes" DiskId="1" />
+      </Component>
+
       <Component Id="jquery.js" Guid="6A4BB6DD-1DA0-4D1B-86EA-BB66DAD7F5B3">
         <File Id="jquery.js" Name="jquery.js" Source="$(var.FingerPrintModule_TargetDir)jquery.js" KeyPath="no" Vital="yes" DiskId="1" />
       </Component>
@@ -144,9 +149,6 @@
         <File Id="style.css" Name="style.css" Source="$(var.FingerPrintModule_TargetDir)style.css" KeyPath="no" Vital="yes" DiskId="1" />
       </Component>
  
-      <!--<Component Id="database_connection.html" Guid="DAB11CCF-A007-4E1F-83A8-C8EA52B4D7B5">
-        <File Id="database_connection.html" Name="database_connection.html" Source="$(var.FingerPrintModule_TargetDir)database_connection.html" KeyPath="no" Vital="yes" DiskId="1" />
-      </Component>-->
       
     </ComponentGroup>
   </Fragment>
